@@ -1,5 +1,3 @@
-
-
 import java.io.Console;
 import java.util.Random;
 
@@ -45,22 +43,33 @@ public class Main {
                 String position = console.readLine("Plant your bomb=>");
                 try {
                     Position bomb = getPosition(position);
-                    BattleField.Ship cship = computer.hit(bomb);
-                    if (cship == null) {
-                        System.out.println("  Sorry, you missed...");
+                    if (computer.hasBeenPlanted(bomb)) {
+                        System.out.println("  You have already planted bomb at "+bomb);
                     } else {
-                        System.out.println("  Wow, you hit "+cship);
+                        BattleField.Ship cship = computer.hit(bomb);
+                        if (cship == null) {
+                            System.out.println("  Sorry, you missed...");
+                        } else {
+                            System.out.println("  Wow, you hit "+cship);
+                            if (computer.gameOver()) {
+                                System.out.println("Congradulation, you have won!");
+                                System.exit(0);
+                            }
+                        }
+                        break;
                     }
-                    break;
                 } catch (Throwable e) {
                     System.out.println("!!"+position+" not a valid position. Try again");
                 }
             }
             // now, it is computer's turn
             Position computerBomb = new Position(random.nextInt(10), random.nextInt(10), false);
+            while (user.hasBeenPlanted(computerBomb)) {
+                computerBomb = new Position(random.nextInt(10), random.nextInt(10), false);
+            }
             BattleField.Ship uship = user.hit(computerBomb);
             if (uship == null) {
-                System.out.println("  Lucky! Computer missed at ("+computerBomb.x+","+computerBomb.y+")");
+                System.out.println("  Lucky! Computer missed at "+computerBomb);
             } else {
                 System.out.println("  Whoops! Computer hit your "+uship+" at ("+computerBomb.x+","+computerBomb.y+")");
             }
