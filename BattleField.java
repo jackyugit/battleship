@@ -1,4 +1,3 @@
-
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
@@ -6,7 +5,6 @@ import java.util.Random;
 public class BattleField {
     private Ship[][] field = new Ship[10][10];
     List<Position> enemyHits = new ArrayList<Position>();
-    List<Position> myHits = new ArrayList<Position>();
     
     List<Ship> hits = new ArrayList<Ship>();
     
@@ -67,6 +65,9 @@ public class BattleField {
         return hits.size() == 5;
     }
     
+    public boolean hasBeenPlanted(Position position) {
+        return enemyHits.contains(position);
+    }
     
     public Ship hit(Position position) {
         if (field[position.x][position.y] != null) {
@@ -74,17 +75,18 @@ public class BattleField {
                 hits.add(field[position.x][position.y]);
             }
         }
+        enemyHits.add(position);
         return field[position.x][position.y];
     }
     
     public void placeShip(Ship ship, Position position) throws IllegalArgumentException {
         if (position.isHorizontal) {
             if (position.x + ship.size >= 10) {
-                throw new IllegalArgumentException("Cannot fit "+ship+" onto ("+position.x+","+position.y+")");
+                throw new IllegalArgumentException("Cannot fit "+ship+" onto "+position);
             }
             for (int i=0;i<ship.size;i++) {
                 if (field[position.x+i][position.y] != null) {
-                    throw new IllegalArgumentException("Position ("+(position.x+i)+","+position.y+") is occupied by "+field[position.x+i][position.y]);
+                    throw new IllegalArgumentException("Position "+position+" is occupied by "+field[position.x+i][position.y]);
                 }
             }
             for (int i=0;i<ship.size;i++) {
